@@ -40,11 +40,36 @@
         button:hover {
             background-color: #555;
         }
+        #timeline {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 50px;
+            background-color: #333;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .clip {
+            width: 80px;
+            height: 40px;
+            background-color: #555;
+            margin: 0 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .clip.active {
+            background-color: #007bff;
+        }
     </style>
 </head>
 <body>
     <h1>Simple Video Editor - Dark Theme</h1>
-    <input type="file" id="videoUpload" accept="video/*">
+    <input type="file" id="videoUpload" accept="video/*" multiple>
     <div id="videoContainer">
         <video id="videoElement" controls>
             Your browser does not support the video tag.
@@ -62,18 +87,49 @@
         <input type="range" id="contrast" min="0" max="200" value="100">
     </div>
 
+    <div id="timeline"></div>
+
     <script>
         const videoUpload = document.getElementById('videoUpload');
         const videoElement = document.getElementById('videoElement');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const brightnessSlider = document.getElementById('brightness');
         const contrastSlider = document.getElementById('contrast');
+        const timeline = document.getElementById('timeline');
+
+        let clips = [];
 
         videoUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const fileURL = URL.createObjectURL(file);
-            videoElement.src = fileURL;
+            clips = Array.from(e.target.files);
+            updateTimeline();
+            if (clips.length > 0) {
+                loadClip(0);
+            }
         });
+
+        function updateTimeline() {
+            timeline.innerHTML = '';
+            clips.forEach((clip, index) => {
+                const clipElement = document.createElement('div');
+                clipElement.className = 'clip';
+                clipElement.textContent = `Clip ${index + 1}`;
+                clipElement.addEventListener('click', () => loadClip(index));
+                timeline.appendChild(clipElement);
+            });
+        }
+
+        function loadClip(index) {
+            const fileURL = URL.createObjectURL(clips[index]);
+            videoElement.src = fileURL;
+            updateActiveClip(index);
+        }
+
+        function updateActiveClip(index) {
+            const clipElements = timeline.getElementsByClassName('clip');
+            Array.from(clipElements).forEach((clip, i) => {
+                clip.classList.toggle('active', i === index);
+            });
+        }
 
         playPauseBtn.addEventListener('click', function() {
             if (videoElement.paused) {

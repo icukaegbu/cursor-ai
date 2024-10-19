@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Video Editor - Dark Theme</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        #videoContainer {
+            margin-bottom: 20px;
+        }
+        #videoElement {
+            max-width: 100%;
+            background-color: #000;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+        input[type="range"] {
+            width: 100%;
+            background-color: #333;
+        }
+        input[type="file"] {
+            color: #e0e0e0;
+        }
+        button {
+            background-color: #444;
+            color: #e0e0e0;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Video Editor - Dark Theme</h1>
+    <input type="file" id="videoUpload" accept="video/*">
+    <div id="videoContainer">
+        <video id="videoElement" controls>
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="controls">
+        <button id="playPauseBtn">Play/Pause</button>
+    </div>
+    <div class="controls">
+        <label for="brightness">Brightness:</label>
+        <input type="range" id="brightness" min="0" max="200" value="100">
+    </div>
+    <div class="controls">
+        <label for="contrast">Contrast:</label>
+        <input type="range" id="contrast" min="0" max="200" value="100">
+    </div>
+
+    <script>
+        const videoUpload = document.getElementById('videoUpload');
+        const videoElement = document.getElementById('videoElement');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const brightnessSlider = document.getElementById('brightness');
+        const contrastSlider = document.getElementById('contrast');
+
+        videoUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileURL = URL.createObjectURL(file);
+            videoElement.src = fileURL;
+        });
+
+        playPauseBtn.addEventListener('click', function() {
+            if (videoElement.paused) {
+                videoElement.play();
+            } else {
+                videoElement.pause();
+            }
+        });
+
+        function updateFilters() {
+            const brightness = brightnessSlider.value;
+            const contrast = contrastSlider.value;
+            videoElement.style.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+        }
+
+        brightnessSlider.addEventListener('input', updateFilters);
+        contrastSlider.addEventListener('input', updateFilters);
+    </script>
+</body>
+</html>
